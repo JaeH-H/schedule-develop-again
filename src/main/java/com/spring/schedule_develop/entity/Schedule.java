@@ -1,8 +1,11 @@
 package com.spring.schedule_develop.entity;
 
+import com.spring.schedule_develop.dto.ScheduleRequestDto;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name = "schedule")
 public class Schedule extends BaseEntity {
 
@@ -11,8 +14,26 @@ public class Schedule extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(columnDefinition = "longtext")
     private String contents;
+
+
+
+    public Schedule() {}
+
+    public Schedule(String name, String title, String contents) {
+        this.name = name;
+        this.title = title;
+        this.contents = contents;
+    }
+
+    public void updateById(ScheduleRequestDto scheduleRequestDto) {
+        this.title = scheduleRequestDto.getTitle();
+        this.contents = scheduleRequestDto.getContents();
+    }
 }
