@@ -9,10 +9,13 @@ public class UserRequestDto {
 
     private String email;
 
+    private String password;
 
-    public UserRequestDto(String userName, String email) {
+
+    public UserRequestDto(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;
+        this.password = password;
     }
 
 }

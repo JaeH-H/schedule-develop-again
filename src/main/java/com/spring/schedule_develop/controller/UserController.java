@@ -1,5 +1,6 @@
 package com.spring.schedule_develop.controller;
 
+import com.spring.schedule_develop.dto.PasswordRequestDto;
 import com.spring.schedule_develop.dto.UserRequestDto;
 import com.spring.schedule_develop.dto.UserResponseDto;
 import com.spring.schedule_develop.service.UserService;
@@ -19,7 +20,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser (@RequestBody UserRequestDto userRequestDto) {
-        UserResponseDto userResponseDto = userService.createUser(userRequestDto.getUserName(), userRequestDto.getEmail());
+        UserResponseDto userResponseDto = userService.createUser(userRequestDto.getUserName(), userRequestDto.getEmail(), userRequestDto.getPassword());
         return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
 
@@ -30,13 +31,12 @@ public class UserController {
         return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
 
+
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<Void> updatePassword(@PathVariable Long userId, @RequestBody PasswordRequestDto passwordRequestDto) {
+      userService.updatePassword(userId, passwordRequestDto.getOldPassword(), passwordRequestDto.getNewPassword());
 
-        UserResponseDto userResponseDto = userService.updateUser(userId, userRequestDto);
-
-        return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
-
+      return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")

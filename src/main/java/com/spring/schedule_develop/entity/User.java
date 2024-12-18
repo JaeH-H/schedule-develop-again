@@ -19,16 +19,21 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
 
     public User() {}
 
-    public User(String userName, String email) {
+    public User(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;
+        this.password = password;
     }
 
-    public void updateUser(UserRequestDto userRequestDto) {
-        this.userName = userRequestDto.getUserName();
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 
 

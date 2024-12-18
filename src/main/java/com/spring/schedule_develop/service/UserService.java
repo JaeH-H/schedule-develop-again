@@ -21,9 +21,9 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto createUser(String userName, String email){
+    public UserResponseDto createUser(String userName, String email, String password) {
 
-        User user = new User(userName, email);
+        User user = new User(userName, email, password);
         User savedUser = userRepository.save(user);
 
         return new UserResponseDto(savedUser.getUserId(),savedUser.getUserName(), savedUser.getEmail(), savedUser.getCreateAt());
@@ -37,26 +37,26 @@ public class UserService {
         return userRepository.findAll().stream().map(UserResponseDto::toDto).toList();
     }
 
-    public UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto){
+
+    @Transactional
+    public void updatePassword(Long userId, String oldPassword, String newPassword){
         User user = userRepository.findByIdOrElseThrow(userId);
 
-        if(user == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
-        }else if(userRequestDto.getUserName() == null ){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username is required");
+        if(!user.getPassword().equals(oldPassword)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Password does not match");
         }
 
-        user.updateUser(userRequestDto);
-
-        return UserResponseDto.toDto(userRepository.save(user));
-
+        user.updatePassword(newPassword);
     }
 
+    @Transactional
     public UserResponseDto deleteUser(Long userId){
         User user = userRepository.findByIdOrElseThrow(userId);
+
         if(user == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
         }
+
         userRepository.delete(user);
         return UserResponseDto.toDto(user);
     }
