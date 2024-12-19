@@ -10,11 +10,14 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findBy(String email, String password);
+
+//
+//    Optional<User> findBy(String email, String password);
 
     default User findByIdOrElseThrow(Long userId) {
         return findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + userId));
     }
 
+    User findByEmail(String email);
 
 }

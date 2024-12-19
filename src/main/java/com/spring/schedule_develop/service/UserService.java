@@ -1,28 +1,27 @@
 package com.spring.schedule_develop.service;
 
-import com.spring.schedule_develop.dto.LoginResponseDto;
-import com.spring.schedule_develop.dto.UserRequestDto;
+import com.spring.schedule_develop.dto.LoginRequestDto;
 import com.spring.schedule_develop.dto.UserResponseDto;
 import com.spring.schedule_develop.entity.User;
 import com.spring.schedule_develop.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import jakarta.servlet.http.HttpSession;
+
 
 import java.util.List;
-import java.util.Optional;
+
 
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    public final UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final HttpSession session;
 
 
     @Transactional
@@ -63,20 +62,25 @@ public class UserService {
         }
 
         userRepository.delete(user);
+
+
+       session.invalidate();
+
         return UserResponseDto.toDto(user);
     }
 
-    public LoginResponseDto login(String email, String password){
-
-        Optional<User> user= userRepository.findBy(email, password);
-
-        return new LoginResponseDto(user.get().getUserId());
-
+    public User login(LoginRequestDto loginRequestDto) {
+        User user = userRepository.findByEmail(loginRequestDto.getEmail());
+        if(user == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
+        }
+        return user;
     }
 
-    public UserResponseDto findById(Long userId){
-        User user = userRepository.findByIdOrElseThrow(userId);
-        return UserResponseDto.toDto(user);
+
+    public User findById(Long userId){
+        return userRepository.findByIdOrElseThrow(userId);
+
 
     }
 

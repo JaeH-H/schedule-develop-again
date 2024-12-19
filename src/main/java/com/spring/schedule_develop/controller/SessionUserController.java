@@ -2,8 +2,7 @@ package com.spring.schedule_develop.controller;
 
 import com.spring.schedule_develop.common.Const;
 import com.spring.schedule_develop.dto.LoginRequestDto;
-import com.spring.schedule_develop.dto.LoginResponseDto;
-import com.spring.schedule_develop.dto.UserResponseDto;
+import com.spring.schedule_develop.entity.User;
 import com.spring.schedule_develop.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -22,33 +21,28 @@ public class SessionUserController {
 
     private final UserService userService;
 
+
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest httpServletRequest){
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
+        User loginUser = userService.login(loginRequestDto);
 
-        LoginResponseDto responseDto = userService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
-        Long userId = responseDto.getUserId();
-
-        if(userId == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        HttpSession session = httpServletRequest.getSession();
-
-        UserResponseDto loginUser = userService.findById(userId);
-
+        HttpSession session = request.getSession();
         session.setAttribute(Const.LOGIN_USER, loginUser);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("로그인 되었습니다.", HttpStatus.OK);
 
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest httpServletRequest){
+    public ResponseEntity<String> logout(HttpServletRequest httpServletRequest){
+
         HttpSession session = httpServletRequest.getSession(false);
+
         if(session != null){
             session.invalidate();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>("로그아웃 되었습니다.", HttpStatus.OK);
     }
 
 }
