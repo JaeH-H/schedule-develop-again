@@ -1,5 +1,6 @@
 package com.spring.schedule_develop.controller;
 
+import com.spring.schedule_develop.dto.LoginRequestDto;
 import com.spring.schedule_develop.dto.PasswordRequestDto;
 import com.spring.schedule_develop.dto.UserRequestDto;
 import com.spring.schedule_develop.dto.UserResponseDto;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long userId, @RequestBody String password) {
+    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long userId, @RequestParam String password) {
         UserResponseDto userResponseDto = userService.deleteUser(userId, password);
 
         return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
