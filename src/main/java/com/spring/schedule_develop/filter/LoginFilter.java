@@ -33,7 +33,6 @@ public class LoginFilter implements Filter {
 
             HttpSession session = httpRequest.getSession(false);
 
-
             if (session == null || session.getAttribute("loginUser") == null) {
 
                 httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
