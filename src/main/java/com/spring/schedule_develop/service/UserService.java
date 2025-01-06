@@ -1,5 +1,7 @@
 package com.spring.schedule_develop.service;
 
+import com.spring.schedule_develop.common.exception.PasswordNotMatchException;
+import com.spring.schedule_develop.common.exception.UserNotFoundException;
 import com.spring.schedule_develop.dto.LoginRequestDto;
 import com.spring.schedule_develop.dto.UserResponseDto;
 import com.spring.schedule_develop.entity.User;
@@ -47,18 +49,22 @@ public class UserService {
         User user = userRepository.findByIdOrElseThrow(userId);
 
         if(!user.getPassword().equals(oldPassword)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Password does not match");
+            throw new PasswordNotMatchException();
         }
 
         user.updatePassword(newPassword);
     }
 
     @Transactional
-    public UserResponseDto deleteUser(Long userId){
+    public UserResponseDto deleteUser(Long userId, String password){
         User user = userRepository.findByIdOrElseThrow(userId);
 
         if(user == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
+            throw new UserNotFoundException();
+        }
+
+        if(!user.getPassword().equals(password)){
+            throw new PasswordNotMatchException();
         }
 
         userRepository.delete(user);
@@ -72,8 +78,13 @@ public class UserService {
     public User login(LoginRequestDto loginRequestDto) {
         User user = userRepository.findByEmail(loginRequestDto.getEmail());
         if(user == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
+            throw new UserNotFoundException();
         }
+
+        if(!loginRequestDto.getPassword().equals(user.getPassword())){
+            throw new PasswordNotMatchException();
+        }
+
         return user;
     }
 

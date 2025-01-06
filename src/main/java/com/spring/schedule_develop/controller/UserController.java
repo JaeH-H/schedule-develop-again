@@ -40,8 +40,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long userId) {
-        UserResponseDto userResponseDto = userService.deleteUser(userId);
+    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long userId, @RequestBody String password) {
+        UserResponseDto userResponseDto = userService.deleteUser(userId, password);
 
         return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
     }
